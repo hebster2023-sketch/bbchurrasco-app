@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BBchurrasco - Cardápio</title>
+    <title>BBchurrasco - Sistema de Comandas</title>
     <style>
         :root { --primary: #d97706; --success: #10b981; --danger: #ef4444; }
         body { font-family: sans-serif; background: #f3f4f6; padding: 15px; }
         .hidden { display: none !important; }
-        .card { background: white; padding: 20px; border-radius: 12px; max-width: 400px; margin: 20px auto; }
+        .card { background: white; padding: 20px; border-radius: 12px; max-width: 400px; margin: 20px auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         button { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
         /* Estilo do Cardápio com Fotos */
         .produto-item { display: flex; align-items: center; background: #fff; margin-bottom: 10px; border-radius: 8px; overflow: hidden; border: 1px solid #ddd; }
         .produto-item img { width: 80px; height: 80px; object-fit: cover; }
         .info-produto { padding: 10px; flex-grow: 1; font-size: 14px; }
-        .produto-item input { width: 50px; }
+        .produto-item input { width: 50px; padding: 4px; text-align: center; }
     </style>
 </head>
 <body>
@@ -23,56 +23,61 @@
     <!-- TELA DE LOGIN -->
     <div id="login-screen" class="card">
         <h2>BBchurrasco 🥩</h2>
-        <input type="email" id="login-email" placeholder="E-mail" style="width:100%; padding:10px; margin-bottom:10px;">
-        <input type="password" id="login-password" placeholder="Senha" style="width:100%; padding:10px; margin-bottom:10px;">
+        <input type="email" id="login-email" placeholder="E-mail" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px;">
+        <input type="password" id="login-password" placeholder="Senha" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px;">
         <button id="btn-login" style="background:var(--primary); color:white;">Entrar</button>
+        <div id="login-error" style="color:red; font-size:13px; text-align:center; margin-top:8px;"></div>
     </div>
 
-    <!-- TELA APP -->
-    <div id="app-screen" class="hidden">
+    <!-- TELA APP PRINCIPAL -->
+    <div id="app-screen" class="hidden card">
+        <h3>BBchurrasco - Comandas</h3>
         <button id="btn-novo" style="background:var(--success); color:white;">+ Novo Pedido</button>
-        <div id="lista-comandas"></div>
+        <div id="lista-comandas" style="margin-top: 15px;"></div>
+        <button id="btn-logout" style="background:var(--danger); color:white; margin-top:20px;">Sair</button>
     </div>
 
     <!-- MODAL CARDÁPIO -->
-    <div id="modal-pedido" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; padding:20px; overflow-y:auto;">
-        <h3>Cardápio</h3>
-        <input type="text" id="pedido-mesa" placeholder="Nome da Mesa" style="padding:10px; width:100%; margin-bottom:10px;">
-        
-        <div id="lista-produtos">
-            <!-- Picanha -->
-            <div class="produto-item">
-                <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=200" alt="Picanha">
-                <div class="info-produto">
-                    <b>Picanha (R$ 15,00)</b><br>
-                    <input type="number" min="0" value="0" data-nome="Picanha" data-preco="15.00" class="qtd-produto">
+    <div id="modal-pedido" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; padding:15px; z-index:1000;">
+        <div style="background:white; width:100%; max-width:400px; border-radius:12px; padding:20px; max-height:90vh; overflow-y:auto;">
+            <h3>Cardápio</h3>
+            <input type="text" id="pedido-mesa" placeholder="Nome da Mesa ou Cliente" style="padding:10px; width:100%; margin:10px 0; border:1px solid #ddd; border-radius:6px;">
+            
+            <div id="lista-produtos">
+                <!-- Picanha -->
+                <div class="produto-item">
+                    <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=200" alt="Picanha">
+                    <div class="info-produto">
+                        <b>Picanha (R$ 15,00)</b><br>
+                        <input type="number" min="0" value="0" data-nome="Picanha" data-preco="15.00" class="qtd-produto">
+                    </div>
+                </div>
+                <!-- Frango -->
+                <div class="produto-item">
+                    <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=200" alt="Frango">
+                    <div class="info-produto">
+                        <b>Espeto de Frango (R$ 10,00)</b><br>
+                        <input type="number" min="0" value="0" data-nome="Frango" data-preco="10.00" class="qtd-produto">
+                    </div>
+                </div>
+                <!-- Cerveja -->
+                <div class="produto-item">
+                    <img src="https://images.unsplash.com/photo-1575037614876-c38707f3546f?w=200" alt="Cerveja">
+                    <div class="info-produto">
+                        <b>Cerveja (R$ 8,00)</b><br>
+                        <input type="number" min="0" value="0" data-nome="Cerveja" data-preco="8.00" class="qtd-produto">
+                    </div>
                 </div>
             </div>
-            <!-- Frango -->
-            <div class="produto-item">
-                <img src="https://images.unsplash.com/photo-1598103434442-51c3858a74e5?w=200" alt="Frango">
-                <div class="info-produto">
-                    <b>Espeto de Frango (R$ 10,00)</b><br>
-                    <input type="number" min="0" value="0" data-nome="Frango" data-preco="10.00" class="qtd-produto">
-                </div>
-            </div>
-            <!-- Cerveja -->
-            <div class="produto-item">
-                <img src="https://images.unsplash.com/photo-1575037614876-c38707f3546f?w=200" alt="Cerveja">
-                <div class="info-produto">
-                    <b>Cerveja (R$ 8,00)</b><br>
-                    <input type="number" min="0" value="0" data-nome="Cerveja" data-preco="8.00" class="qtd-produto">
-                </div>
-            </div>
-        </div>
 
-        <button id="btn-salvar" style="background:var(--success); color:white;">Confirmar Pedido</button>
-        <button id="btn-fechar" style="background:var(--danger); color:white;">Cancelar</button>
+            <button id="btn-salvar" style="background:var(--success); color:white;">Confirmar Pedido</button>
+            <button id="btn-fechar" style="background:var(--danger); color:white;">Cancelar</button>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -90,14 +95,22 @@
 
         // Lógica de Login
         document.getElementById('btn-login').onclick = () => {
-            signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-password').value)
-                .catch(() => alert("Erro no login!"));
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+            signInWithEmailAndPassword(auth, email, pass)
+                .catch(() => { document.getElementById('login-error').textContent = "Erro: verifique e-mail e senha."; });
         };
+
+        document.getElementById('btn-logout').onclick = () => signOut(auth);
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app-screen').classList.remove('hidden');
+                carregarComandas();
+            } else {
+                document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('app-screen').classList.add('hidden');
             }
         });
 
@@ -106,13 +119,39 @@
 
         document.getElementById('btn-salvar').onclick = async () => {
             const mesa = document.getElementById('pedido-mesa').value;
+            if(!mesa) { alert("Informe a mesa!"); return; }
             let itens = [];
+            let total = 0;
             document.querySelectorAll('.qtd-produto').forEach(i => {
-                if(i.value > 0) itens.push({ nome: i.dataset.nome, qtd: i.value });
+                const qtd = parseInt(i.value) || 0;
+                if(qtd > 0) {
+                    const preco = parseFloat(i.dataset.preco);
+                    itens.push({ nome: i.dataset.nome, qtd, subtotal: qtd * preco });
+                    total += qtd * preco;
+                }
             });
-            await addDoc(collection(db, "comandas"), { mesa, itens, status: 'aberto' });
+            if(itens.length === 0) { alert("Selecione ao menos um produto!"); return; }
+            
+            await addDoc(collection(db, "comandas"), { mesa, itens, total, status: 'aberto' });
             document.getElementById('modal-pedido').classList.add('hidden');
+            document.getElementById('pedido-mesa').value = '';
+            document.querySelectorAll('.qtd-produto').forEach(i => i.value = 0);
         };
+
+        function carregarComandas() {
+            onSnapshot(collection(db, "comandas"), (snapshot) => {
+                const lista = document.getElementById('lista-comandas');
+                lista.innerHTML = "";
+                snapshot.forEach((docSnap) => {
+                    const c = docSnap.data();
+                    let itensTxt = c.itens.map(i => `${i.qtd}x ${i.nome}`).join(', ');
+                    lista.innerHTML += `<div style="background:#f9fafb; padding:10px; margin-bottom:8px; border-radius:6px; border:1px solid #e5e7eb;">
+                        <b>${c.mesa}</b> - R$ ${c.total ? c.total.toFixed(2) : '0,00'}<br>
+                        <small style="color:#666;">${itensTxt}</small>
+                    </div>`;
+                });
+            });
+        }
     </script>
 </body>
 </html>
