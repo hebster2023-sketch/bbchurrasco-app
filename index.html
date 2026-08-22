@@ -3,49 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BBchurrasco - Sistema de Comandas</title>
+    <title>BBchurrasco - Cardápio</title>
     <style>
-        :root {
-            --primary: #d97706;
-            --primary-dark: #b45309;
-            --bg: #f3f4f6;
-            --card-bg: #ffffff;
-            --text: #1f2937;
-            --danger: #ef4444;
-            --success: #10b981;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding: 15px; }
+        :root { --primary: #d97706; --success: #10b981; --danger: #ef4444; }
+        body { font-family: sans-serif; background: #f3f4f6; padding: 15px; }
         .hidden { display: none !important; }
+        .card { background: white; padding: 20px; border-radius: 12px; max-width: 400px; margin: 20px auto; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
-        .card { background: var(--card-bg); border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); max-width: 400px; margin: 30px auto; }
-        h1, h2 { text-align: center; color: var(--primary); margin-bottom: 20px; }
-        
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; }
-        
-        button { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-success { background: var(--success); color: white; }
-        
-        .error-msg { color: var(--danger); text-align: center; margin-top: 10px; font-size: 14px; }
-        
-        /* Estilos do App principal */
-        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .comanda-card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
-        .comanda-header { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px; font-size: 18px; }
-        .item-lista { font-size: 14px; color: #4b5563; margin-bottom: 4px; }
-        .total-comanda { font-weight: bold; margin: 10px 0; font-size: 16px; }
-        .acoes-comanda { display: flex; gap: 10px; }
-        
-        /* Modal / Formulário de Novo Pedido */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; padding: 15px; z-index: 1000; }
-        .modal-content { background: white; width: 100%; max-width: 450px; border-radius: 12px; padding: 20px; max-height: 90vh; overflow-y: auto; }
-        .produto-linha { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; }
-        .produto-linha input { width: 60px; padding: 6px; text-align: center; }
+        /* Estilo do Cardápio com Fotos */
+        .produto-item { display: flex; align-items: center; background: #fff; margin-bottom: 10px; border-radius: 8px; overflow: hidden; border: 1px solid #ddd; }
+        .produto-item img { width: 80px; height: 80px; object-fit: cover; }
+        .info-produto { padding: 10px; flex-grow: 1; font-size: 14px; }
+        .produto-item input { width: 50px; }
     </style>
 </head>
 <body>
@@ -53,241 +23,95 @@
     <!-- TELA DE LOGIN -->
     <div id="login-screen" class="card">
         <h2>BBchurrasco 🥩</h2>
-        <form id="login-form">
-            <div class="form-group">
-                <label>E-mail</label>
-                <input type="email" id="login-email" required placeholder="admin@bbchurrasco.com">
-            </div>
-            <div class="form-group">
-                <label>Senha</label>
-                <input type="password" id="login-password" required placeholder="••••••">
-            </div>
-            <button type="submit" class="btn-primary">Entrar</button>
-            <div id="login-error" class="error-msg"></div>
-        </form>
+        <input type="email" id="login-email" placeholder="E-mail" style="width:100%; padding:10px; margin-bottom:10px;">
+        <input type="password" id="login-password" placeholder="Senha" style="width:100%; padding:10px; margin-bottom:10px;">
+        <button id="btn-login" style="background:var(--primary); color:white;">Entrar</button>
     </div>
 
-    <!-- TELA PRINCIPAL DO APP -->
+    <!-- TELA APP -->
     <div id="app-screen" class="hidden">
-        <div class="app-header">
-            <div>
-                <strong>BBchurrasco</strong><br>
-                <small id="user-display" style="color: #6b7280;"></small>
-            </div>
-            <button id="btn-logout" class="btn-danger" style="width: auto; padding: 8px 15px; font-size: 14px;">Sair</button>
-        </div>
-
-        <button id="btn-abrir-modal" class="btn-success" style="margin-bottom: 20px;">+ Novo Pedido / Comanda</button>
-
-        <div id="lista-comandas">
-            <!-- As comandas cadastradas aparecerão aqui -->
-        </div>
+        <button id="btn-novo" style="background:var(--success); color:white;">+ Novo Pedido</button>
+        <div id="lista-comandas"></div>
     </div>
 
-    <!-- MODAL DE NOVO PEDIDO -->
-    <div id="modal-pedido" class="modal hidden">
-        <div class="modal-content">
-            <h3>Nova Comanda</h3>
-            <div class="form-group">
-                <label>Mesa / Cliente</label>
-                <input type="text" id="pedido-mesa" placeholder="Ex: Mesa 3 ou João">
-            </div>
-            
-            <label style="margin-bottom: 10px;">Selecione os Produtos:</label>
-            <div id="lista-produtos-form">
-                <div class="produto-linha">
-                    <span>Espetinho de Picanha (R$ 15,00)</span>
-                    <input type="number" min="0" value="0" data-nome="Espetinho de Picanha" data-preco="15.00" class="qtd-produto">
-                </div>
-                <div class="produto-linha">
-                    <span>Espetinho de Frango (R$ 10,00)</span>
-                    <input type="number" min="0" value="0" data-nome="Espetinho de Frango" data-preco="10.00" class="qtd-produto">
-                </div>
-                <div class="produto-linha">
-                    <span>Cerveja Lata (R$ 8,00)</span>
-                    <input type="number" min="0" value="0" data-nome="Cerveja Lata" data-preco="8.00" class="qtd-produto">
-                </div>
-                <div class="produto-linha">
-                    <span>Refrigerante (R$ 6,00)</span>
-                    <input type="number" min="0" value="0" data-nome="Refrigerante" data-preco="6.00" class="qtd-produto">
-                </div>
-                <div class="produto-linha">
-                    <span>Pão de Alho (R$ 7,00)</span>
-                    <input type="number" min="0" value="0" data-nome="Pão de Alho" data-preco="7.00" class="qtd-produto">
+    <!-- MODAL CARDÁPIO -->
+    <div id="modal-pedido" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; padding:20px; overflow-y:auto;">
+        <h3>Cardápio</h3>
+        <input type="text" id="pedido-mesa" placeholder="Nome da Mesa" style="padding:10px; width:100%; margin-bottom:10px;">
+        
+        <div id="lista-produtos">
+            <!-- Picanha -->
+            <div class="produto-item">
+                <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=200" alt="Picanha">
+                <div class="info-produto">
+                    <b>Picanha (R$ 15,00)</b><br>
+                    <input type="number" min="0" value="0" data-nome="Picanha" data-preco="15.00" class="qtd-produto">
                 </div>
             </div>
-
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button type="button" id="btn-salvar-pedido" class="btn-success">Salvar Comanda</button>
-                <button type="button" id="btn-fechar-modal" class="btn-danger">Cancelar</button>
+            <!-- Frango -->
+            <div class="produto-item">
+                <img src="https://images.unsplash.com/photo-1598103434442-51c3858a74e5?w=200" alt="Frango">
+                <div class="info-produto">
+                    <b>Espeto de Frango (R$ 10,00)</b><br>
+                    <input type="number" min="0" value="0" data-nome="Frango" data-preco="10.00" class="qtd-produto">
+                </div>
+            </div>
+            <!-- Cerveja -->
+            <div class="produto-item">
+                <img src="https://images.unsplash.com/photo-1575037614876-c38707f3546f?w=200" alt="Cerveja">
+                <div class="info-produto">
+                    <b>Cerveja (R$ 8,00)</b><br>
+                    <input type="number" min="0" value="0" data-nome="Cerveja" data-preco="8.00" class="qtd-produto">
+                </div>
             </div>
         </div>
+
+        <button id="btn-salvar" style="background:var(--success); color:white;">Confirmar Pedido</button>
+        <button id="btn-fechar" style="background:var(--danger); color:white;">Cancelar</button>
     </div>
 
-    <!-- SCRIPTS DO FIREBASE E DO APP -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // CONFIGURAÇÃO DO SEU FIREBASE (substitua se necessário ou mantenha a sua)
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_AUTH_DOMAIN",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_STORAGE_BUCKET",
-            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-            appId: "SEU_APP_ID"
+            apiKey: "AIzaSyBP_3bvi9PnViCPkIQqEdoF1I7BcItfHEY",
+            authDomain: "bbchurrasco-app.firebaseapp.com",
+            projectId: "bbchurrasco-app",
+            storageBucket: "bbchurrasco-app.firebasestorage.app",
+            messagingSenderId: "470656170967",
+            appId: "1:470656170967:web:f9c96614d411561ddfe992"
         };
 
-        // Inicializa Firebase (se já estiver configurado no seu projeto, ele vai puxar)
-        let app, auth, db;
-        try {
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-        } catch (e) {
-            console.log("Firebase já inicializado ou precisa das chaves.");
-        }
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        // Elementos da Tela
-        const loginScreen = document.getElementById('login-screen');
-        const appScreen = document.getElementById('app-screen');
-        const loginForm = document.getElementById('login-form');
-        const loginError = document.getElementById('login-error');
-        const userDisplay = document.getElementById('user-display');
-        const btnLogout = document.getElementById('btn-logout');
-        
-        const modalPedido = document.getElementById('modal-pedido');
-        const btnAbrirModal = document.getElementById('btn-abrir-modal');
-        const btnFecharModal = document.getElementById('btn-fechar-modal');
-        const btnSalvarPedido = document.getElementById('btn-salvar-pedido');
-        const listaComandas = document.getElementById('lista-comandas');
+        // Lógica de Login
+        document.getElementById('btn-login').onclick = () => {
+            signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-password').value)
+                .catch(() => alert("Erro no login!"));
+        };
 
-        // Observa login
-        if(auth) {
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    loginScreen.classList.add('hidden');
-                    appScreen.classList.remove('hidden');
-                    userDisplay.textContent = user.email;
-                    carregarComandas();
-                } else {
-                    loginScreen.classList.remove('hidden');
-                    appScreen.classList.add('hidden');
-                }
-            });
-        }
-
-        // Ação de Login
-        if(loginForm) {
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('login-email').value;
-                const senha = document.getElementById('login-password').value;
-                loginError.textContent = "";
-                try {
-                    await signInWithEmailAndPassword(auth, email, senha);
-                } catch (error) {
-                    loginError.textContent = "Erro no login: Verifique e-mail e senha.";
-                }
-            });
-        }
-
-        // Ação de Logout
-        if(btnLogout) {
-            btnLogout.addEventListener('click', () => {
-                signOut(auth);
-            });
-        }
-
-        // Controle do Modal
-        btnAbrirModal.addEventListener('click', () => modalPedido.classList.remove('hidden'));
-        btnFecharModal.addEventListener('click', () => modalPedido.classList.add('hidden'));
-
-        // Salvar Novo Pedido com Produtos
-        btnSalvarPedido.addEventListener('click', async () => {
-            const mesa = document.getElementById('pedido-mesa').value;
-            if(!mesa) {
-                alert("Informe o nome da mesa ou cliente!");
-                return;
-            }
-
-            const inputsQtd = document.querySelectorAll('.qtd-produto');
-            let itens = [];
-            let total = 0;
-
-            inputsQtd.forEach(input => {
-                const qtd = parseInt(input.value) || 0;
-                if(qtd > 0) {
-                    const nome = input.getAttribute('data-nome');
-                    const preco = parseFloat(input.getAttribute('data-preco'));
-                    itens.push({ nome, qtd, preco: preco * qtd });
-                    total += preco * qtd;
-                }
-            });
-
-            if(itens.length === 0) {
-                alert("Adicione pelo menos um produto na comanda!");
-                return;
-            }
-
-            try {
-                await addDoc(collection(db, "comandas"), {
-                    mesa,
-                    itens,
-                    total,
-                    status: "aberto",
-                    data: new Date().toLocaleTimeString()
-                });
-                modalPedido.classList.add('hidden');
-                document.getElementById('pedido-mesa').value = "";
-                inputsQtd.forEach(i => i.value = 0);
-            } catch (e) {
-                alert("Erro ao salvar pedido: " + e.message);
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app-screen').classList.remove('hidden');
             }
         });
 
-        // Carregar Comandas em tempo real
-        function carregarComandas() {
-            if(!db) return;
-            onSnapshot(collection(db, "comandas"), (snapshot) => {
-                listaComandas.innerHTML = "";
-                snapshot.forEach((docSnap) => {
-                    const comanda = docSnap.data();
-                    const id = docSnap.id;
+        document.getElementById('btn-novo').onclick = () => document.getElementById('modal-pedido').classList.remove('hidden');
+        document.getElementById('btn-fechar').onclick = () => document.getElementById('modal-pedido').classList.add('hidden');
 
-                    let itensHtml = comanda.itens.map(item => `<div class="item-linha">${item.qtd}x ${item.nome} - R$ ${item.preco.toFixed(2)}</div>`).join('');
-
-                    const card = document.createElement('div');
-                    card.className = 'comanda-card';
-                    card.style.borderLeftColor = comanda.status === 'pago' ? 'var(--success)' : 'var(--primary)';
-                    card.innerHTML = `
-                        <div class="comanda-header">
-                            <span>${comanda.mesa}</span>
-                            <span style="font-size: 14px; color: ${comanda.status === 'pago' ? 'var(--success)' : 'var(--danger)'};">${comanda.status.toUpperCase()}</span>
-                        </div>
-                        <div style="margin-bottom: 10px;">${itensHtml}</div>
-                        <div class="total-comanda">Total: R$ ${comanda.total.toFixed(2)}</div>
-                        <div class="acoes-comanda">
-                            ${comanda.status === 'aberto' ? `<button onclick="mudarStatus('${id}', 'pago')" class="btn-success" style="padding: 6px;">Pagar</button>` : ''}
-                            <button onclick="excluirComanda('${id}')" class="btn-danger" style="padding: 6px;">Excluir</button>
-                        </div>
-                    `;
-                    listaComandas.appendChild(card);
-                });
+        document.getElementById('btn-salvar').onclick = async () => {
+            const mesa = document.getElementById('pedido-mesa').value;
+            let itens = [];
+            document.querySelectorAll('.qtd-produto').forEach(i => {
+                if(i.value > 0) itens.push({ nome: i.dataset.nome, qtd: i.value });
             });
-        }
-
-        // Funções globais para os botões do card
-        window.mudarStatus = async (id, novoStatus) => {
-            await updateDoc(doc(db, "comandas", id), { status: novoStatus });
-        };
-
-        window.excluirComanda = async (id) => {
-            if(confirm("Deseja realmente excluir esta comanda?")) {
-                await deleteDoc(doc(db, "comandas", id));
-            }
+            await addDoc(collection(db, "comandas"), { mesa, itens, status: 'aberto' });
+            document.getElementById('modal-pedido').classList.add('hidden');
         };
     </script>
 </body>
